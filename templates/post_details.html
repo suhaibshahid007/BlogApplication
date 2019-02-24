@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{%  load crispy_forms_tags %}
+{% block head %}{{instance.title}} | {{block.super}}{% endblock head %}
+
+{% block content %}
+
+<div class='col-sm-6  col-sm-offset-3'>
+     {% if instance.image %}
+     <img src='{{instance.image.url}}'  class ='img-responsive'/>
+     {% endif%}
+<h1> {{title}}<small> {{ instance.updated }}</small></h1>
+
+
+
+
+     {% if instance.user.get_full_name %}
+     <p> Author : {{instance.user.get_full_name}}</p>
+
+     {%endif%}
+
+<!--
+<p><div class="fb-like" data-href="{{ request.build_absolute_uri}}" data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+<hr/>
+</p>
+-->
+
+<div class ='row'>
+<div class ='col-sm-12'>
+
+     <div class="post_item_details">{{instance.get_markdown}}</div>
+<hr/>
+<br/>
+
+     <br>
+          <p class ='lead'>Comments</p>
+          {% if request.user.is_authenticated %}
+    <form method="POST" action="  ">{% csrf_token %}
+
+        {{comment_form | crispy}}
+        <input type="submit" value="Post Comments" class="btn btn-default">
+    </form>
+         {% else %}
+         <p>You must log in to Comment </p>
+          {% endif %}
+    <hr>
+          {% for comment in comments %}
+
+           <blockquote>
+               <p>{{comment.content}}</p>
+               <footer>via {{comment.user}} | {{comment.timestamp | timesince}} ago</footer>
+           </blockquote>
+          {% endfor %}
+     </div>
+<!--
+<div class="fb-comments" data-href="{{ request.build_absolute_uri}}"data-numposts="5"></div> -->
+
+</div>
+</div>
+</div>
+
+{% endblock content %}
